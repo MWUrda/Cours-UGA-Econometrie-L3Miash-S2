@@ -1,0 +1,13 @@
+\begin{thebibliography}{1}
+\newcommand{\enquote}[1]{``#1''}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+
+\bibitem[{Kiel and McClain(1995)}]{KielMcCain1995}
+Kiel, K.~A. and K.~T. McClain. 1995.
+\newblock \enquote{House Prices during Siting Decision Stages: The Case of an
+  Incinerator from Rumor through Operation.}
+\newblock \emph{Journal of Environmental Economics and Management} 28:241--255.
+
+\end{thebibliography}

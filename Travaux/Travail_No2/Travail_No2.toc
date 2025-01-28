@@ -1,0 +1,3 @@
+\babel@toc {french}{}
+\contentsline {section}{\tocsection {}{1}{Application: \cite {KielMcCain1995}}}{2}{section.1}
+\contentsline {section}{\tocsection {}{}{R\'ef\'erences}}{2}{section*.2}

@@ -1,0 +1,142 @@
+\documentclass[10pt, reqno]{amsart}
+\input{../../Preambule}
+\newcommand{\bxi}{ \boldx_i }
+\usepackage{tikz}
+\usepackage{enumitem}
+\usepackage{txfonts}
+\usepackage{mathrsfs}
+\usepackage{fancyhdr}
+
+
+
+\usepackage{fancyhdr}
+\usetikzlibrary{calc,decorations.pathmorphing,patterns}
+\usepackage{listofitems}
+\tikzstyle{mynode}=[thick,draw=blue,fill=blue!20,circle,minimum size=22]
+\usepackage{amsaddr}
+\usepackage{mathrsfs}
+
+\makeatletter
+
+\pgfdeclaredecoration{penciline}{initial}{
+    \state{initial}[width=+\pgfdecoratedinputsegmentremainingdistance,auto corner on length=1mm,]{
+        \pgfpathcurveto%
+        {% From
+            \pgfqpoint{\pgfdecoratedinputsegmentremainingdistance}
+                            {\pgfdecorationsegmentamplitude}
+        }
+        {%  Control 1
+        \pgfmathrand
+        \pgfpointadd{\pgfqpoint{\pgfdecoratedinputsegmentremainingdistance}{0pt}}
+                        {\pgfqpoint{-\pgfdecorationsegmentaspect\pgfdecoratedinputsegmentremainingdistance}%
+                                        {\pgfmathresult\pgfdecorationsegmentamplitude}
+                        }
+        }
+        {%TO 
+        \pgfpointadd{\pgfpointdecoratedinputsegmentlast}{\pgfpoint{1pt}{1pt}}
+        }
+    }
+    \state{final}{}
+}
+\makeatother
+
+\pagestyle{fancy}
+%\renewcommand{\subsection{mark}[1]{\markright{#1}{}}
+\fancyhead{}
+\fancyfoot{} 
+%\fancyhead[LE,LO]{\tiny{\thepage}}
+\fancyhead[C]{\small\textsc{Économètrie: L3 MIASH, S2}}
+%fancyhead[CE,CO]{\tiny{\rightmark}}
+\fancyhead[L]{\small\textsc{Université de Grenoble Alpes}}
+\fancyfoot[C]{\small{\thepage}}
+%\fancyfoot[R]{\small \textcopyright \ \  \small\textsc
+\fancyhead[R]{ \small\textsc{M. W. Urdanivia}}
+%\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+%\pagenumbering{roman}
+
+
+\begin{document} 
+\usetikzlibrary{positioning}
+\usetikzlibrary{snakes}
+\usetikzlibrary{calc}
+\usetikzlibrary{arrows}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{shapes.misc}
+\usetikzlibrary{shapes}
+%\tikzset{block/.style={draw, rectangle, fill=gray!20, 
+%\tikzset{empty/.style={draw, rectangle, fill=none, tex
+%\tikzset{line/.style={draw, -latex'}}
+%\onehalfspace
+
+%\includepdf{trame}
+
+\begin{titlepage}
+\centering
+	%\includegraphics[width=0.15\textwidth]{logoUGA2020}
+	{\scshape\Large \textsc{Université de Grenoble Alpes\\(L3 MIASH, S2)}\par}
+	\vspace{0.5cm}
+	{\Large\bfseries \scshape\Large \textsc{ÉCONOMÉTRIE}\par}
+	%{\scshape\large \textsc{Extremum Estimators(1)}\par}
+	%\vspace{1cm}
+	\vspace{0.5cm}
+	{\Large\bfseries \textsc{Travaux} \par}
+    \vspace{0.5cm}   
+   {\Large\bfseries \textsc{Travail 2} \par}
+	\vspace{1cm}
+	{(\textsc{Cette version: \today})\par}
+	\vspace{1cm}
+	{\large \textsc{Michal W. Urdanivia}
+	\footnote{Contact:  
+	\href{mailto:michal.wong-urdanivia@univ-grenoble-alpes.fr}{michal.wong-urdanivia@univ-grenoble-alpes.fr}, 
+	 Université de Grenoble Alpes,  Faculté d'\'Economie, GAEL.}\par}
+	 %\includegraphics[width=0.15\textwidth]{logoUGA}
+	%\vfill
+	%supervised by\par
+	%Dr.~Mark \textsc{Brown}
+%\vfill
+% Bottom of the page
+	
+\end{titlepage}
+
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\section{Application: \cite{KielMcCain1995}}
+\textbf{Remarque:} pour cet exercice vous pouvez vous appuyer sur le ce \href{https://colab.research.google.com/drive/1nSdzN7uEE7603NPnGeRasRqOW8-m09zl?usp=sharing}{notebook} 
+
+\medskip
+
+On considère des données utilisées par \cite{KielMcCain1995}(fichier "KIELMC.DTA") sur des maisons vendues à Andover(MA, USA) en 1988. On considère le modèle suivant,
+
+\begin{align*}
+\log(price_i) =& \alpha + \log(dist_i)\beta + U_i
+\end{align*}
+où $price_i$ est le prix d'une maison $i$, et $dist_i$ sa distance par rapport à un incinérateur d'ordures. On suppose que $\Er[U_i| \log(dist_i)) = 0$, de sorte que l'estimateur des MCO est sans biais.
+
+ \begin{enumerate}
+ \item Interprétez les coefficients $\alpha$ et $\beta$. 
+\item Lire les données avec un script Python. Décrivez votre
+  échantillon(taille) en calculant des statistiques descriptives
+  telles que les moyennes et
+  écart-types des variables "price" et "dist".
+ \item Estimez par MCO $\alpha$ et $\beta$. Commentez vos résultats.
+ \item Pensez vous que ce modèle fournisse une mesure sans biais de l'élasticité ceteris paribus de $price_i$ par rapport à $dist_i$?(Pensez  notamment à la décision des villes quant aux placements des incinérateurs, et à la condition pour que l'estimateur des MCO soit sans biais à savoir $\Er[U_i|X_i] = 0$, autrement dit qu'en moyenne les facteurs non observés et liés à $Y_i$ ne sont pas liés avec le régresseur).
+ \item Quelles autres variables affectent vraisemblablement le prix des
+   maisons? Sont-elles suscéptibles d'être correlées avec la distance
+   $dist_i$?.
+  \item Estimez le modèle avec les variables suggérées à la question précédente et comparez vos résultats 
+  par rapport au modèle de départ. 
+  \item À partir de vos résultats proposez des tests de nullité des coefficients en vous appuyant sur 
+  les résultats de vos estimations et les résultats d'inférence d'un modèle de régression linéaire normal(en supposant 
+  satisfaites les conditions nécessaires à leurs validité).
+ \end{enumerate}
+
+\bibliographystyle{jpe}
+\bibliography{../../Biblio.bib}
+ \end{document}

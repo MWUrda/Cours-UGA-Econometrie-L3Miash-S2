@@ -1,0 +1,474 @@
+\input{../../../../Preambule}
+
+\newcommand{\bxi}{ \boldx_i }
+\usepackage{tikz}
+\usepackage{enumitem}
+\usepackage{txfonts}
+\usepackage{mathrsfs}
+\usepackage{fancyhdr}
+
+
+
+\usepackage{fancyhdr}
+\usetikzlibrary{calc,decorations.pathmorphing,patterns}
+\usepackage{listofitems}
+\tikzstyle{mynode}=[thick,draw=blue,fill=blue!20,circle,minimum size=22]
+\usepackage{amsaddr}
+\usepackage{mathrsfs}
+
+\makeatletter
+
+\pgfdeclaredecoration{penciline}{initial}{
+    \state{initial}[width=+\pgfdecoratedinputsegmentremainingdistance,auto corner on length=1mm,]{
+        \pgfpathcurveto%
+        {% From
+            \pgfqpoint{\pgfdecoratedinputsegmentremainingdistance}
+                            {\pgfdecorationsegmentamplitude}
+        }
+        {%  Control 1
+        \pgfmathrand
+        \pgfpointadd{\pgfqpoint{\pgfdecoratedinputsegmentremainingdistance}{0pt}}
+                        {\pgfqpoint{-\pgfdecorationsegmentaspect\pgfdecoratedinputsegmentremainingdistance}%
+                                        {\pgfmathresult\pgfdecorationsegmentamplitude}
+                        }
+        }
+        {%TO 
+        \pgfpointadd{\pgfpointdecoratedinputsegmentlast}{\pgfpoint{1pt}{1pt}}
+        }
+    }
+    \state{final}{}
+}
+\makeatother
+
+\pagestyle{fancy}
+%\renewcommand{\subsection{mark}[1]{\markright{#1}{}}
+\fancyhead{}
+\fancyfoot{} 
+%\fancyhead[LE,LO]{\tiny{\thepage}}
+\fancyhead[C]{\small\textsc{UGA, M1 MIASH-BDA, S2}}
+%fancyhead[CE,CO]{\tiny{\rightmark}}
+\fancyhead[L]{\small\textsc{ÉCONOMÉTRIE 2}}
+\fancyfoot[C]{\small{\thepage}}
+%\fancyfoot[R]{\small \textcopyright \ \  \small\textsc
+\fancyhead[R]{ \small\textsc{M. Urdanivia}}
+%\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+%\pagenumbering{roman}
+
+
+\begin{document} 
+\usetikzlibrary{positioning}
+\usetikzlibrary{snakes}
+\usetikzlibrary{calc}
+\usetikzlibrary{arrows}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{shapes.misc}
+\usetikzlibrary{shapes}
+%\tikzset{block/.style={draw, rectangle, fill=gray!20, 
+%\tikzset{empty/.style={draw, rectangle, fill=none, tex
+%\tikzset{line/.style={draw, -latex'}}
+%\onehalfspace
+
+%\includepdf{trame}
+
+\begin{titlepage}
+\centering
+	%\includegraphics[width=0.15\textwidth]{logoUGA2020
+    {\scshape\Large \textbf{\textsc{ÉCONOMÉTRIE 2}}\par}
+	{\scshape\Large \textbf{\textsc{UGA, M1 MIASH-BDA, S2}}\par}
+	\vspace{1cm}
+	%{\scshape\large \textsc{Extremum Estimators(1)}\par}
+	%\vspace{1cm}
+	{\Large\bfseries \textsc{SYSTÈMES LINÉAIRES D'ÉQUATIONS SIMULTANÉES: TRAVAIL 1} \par}
+   % \vspace{1cm}   
+	%{\Large\bfseries \textsc{RÉCAPITULATIF ET RÉSULTATS NON ASYMPTOTIQUES} \par}
+    %{\Large\bfseries \textsc{EXAMEN(L3 MIASH, S2)} \par}
+	%\vspace{1cm}
+	{(\textsc{Cette version: \today})\par}
+	\vspace{1cm}
+	{\large \textsc{Michal Urdanivia}
+	\footnote{Contact:  
+	\href{mailto:michal.wong-urdanivia@univ-grenoble-alpes.fr}{michal.wong-urdanivia@univ-grenoble-alpes.fr}, 
+	 Université de Grenoble Alpes,  Faculté d'\'Economie, GAEL.}\par}
+	%\vfill
+	%supervised by\par
+	%Dr.~Mark \textsc{Brown}
+%\vfill
+% Bottom of the page
+	
+\end{titlepage}
+
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\section{Objectifs}
+\begin{enumerate}
+\item Illustrer les mécanismes d’identification dans les systèmes d’équations simultanées et leurs liens avec les techniques de VI
+\item Manipuler des notations matriciels
+\item Montrer comment utiliser un résultat théorique en pratique, ici la méthode du delta pour déterminer la distribution as. 
+d’un estimateur des MCI.
+\item Appliquer sur des données certaines des méthodes.
+\end{enumerate}
+
+\section{Théorie}
+
+\subsection{Modèles récursifs}
+Les vecteurs de variables aléatoires $(y_{1i},y_{2i},z_{1i},z_{2i})$ sont indépendants, identiquement distribués pour 
+$i= 1,\ldots, N$. Ils satisfont en outre les conditions de régularité requises par les applications de la loi
+ des grands nombres et du théorème central limite nécessaires pour la normalité as. des estimateurs considérés 
+ (lorsqu’ils sont employés de manière pertinente!). 
+
+ On considère ici différentes version du modèle suivant:
+
+    
+ \begin{align}
+    \left\{
+ \begin{array}{l}
+    y_{1i} = a_{10}z_{1i} + a_{2,0}z_{2i} + a_{3,0}y_{2i} +u_{1i}\\
+    y_{2i}= b_{1,0}z_{1i} + b_{2,0}z_{2i}+u_{2i}
+ \end{array}
+\right.
+&, \ \text{avec} \  \Exp[\boldu_i|\boldz_i] =0,  \text{et} \ \Exp[\boldu_i\boldu_i^\prime|\boldz_i]=\boldOmega
+\label{eq1}
+ \end{align}
+
+ avec les notations suivantes:
+
+ \[
+    \boldy_i \equiv 
+    \begin{bmatrix}
+        y_{1i}\\
+        y_{2i}
+    \end{bmatrix}
+    , \quad 
+    \boldz_i \equiv 
+\begin{bmatrix}
+    z_{1i}\\
+    z_{2i}
+\end{bmatrix}
+, \quad 
+\boldu_i \equiv 
+\begin{bmatrix}
+    u_{1i}\\
+    u_{2i}
+\end{bmatrix}
+, \quad 
+\boldOmega \equiv
+\begin{bmatrix}
+    \omega_{11}&\omega_{12}\\
+    \omega_{12}&\omega_{22}
+\end{bmatrix}
+ \]
+    
+ On utilisera également les notations:
+
+
+ \begin{align*}
+    \bolda_0 \equiv 
+    \left[
+    \begin{array}{l}
+        a_{1,0}\\
+        a_{2, 0}\\
+        a_{3, 0}
+    \end{array}
+    \right]
+    , \quad 
+    \boldb_0 \equiv 
+ \left[
+ \begin{array}{l}
+    b_{1,0}\\
+    b_{2,0}
+\end{array}
+ \right]
+\end{align*}
+
+et:
+
+\[
+    \underline{\boldy}_k \equiv 
+    \begin{bmatrix}
+        y_{k,1}\\
+        \vdots\\
+        y_{k, N}
+    \end{bmatrix}_{N\times 1}
+    , \quad 
+    \underline{\boldz}_k \equiv
+        \begin{bmatrix}
+        z_{k,1}\\
+        \vdots\\
+        z_{k, N}
+    \end{bmatrix}_{N\times 1}
+    , \quad \text{pour $k=1, 2$ et} \
+    \boldZ \equiv 
+\begin{bmatrix}
+    \underline{\boldz}_1& \underline{\boldz}_2
+\end{bmatrix}_{N\times 2},
+\]
+et on suppose que $\Var[\boldz_i]$ est inversible.
+
+\begin{enumerate}
+    \item Justifier l’absence de paramètres constants pour les modèles de $y_{1i}$ et $y_{2i}$ 
+    \item  Déterminer les variables exogènes et endogènes de chacune des équations
+    du système et du système
+    \item Qualifier le modèle décrit par le système d’équations \eqref{eq1}.
+    \item Analyser l’identification de $\boldb_0$ et $\bolda_0$ dans le modèle.  
+    \item Proposer un estimateur convergent de $\boldb_0$ et donner sa forme avec les $y_{2,i}$ et $\boldz_i$ 
+    ainsi qu’avec $\underline{\boldy}_k$ et $\boldZ$.
+    \item Donner une approximation de la distribution de $\boldb_0$ lorsque $N$ est grand et un estimateur de sa précision.
+    \item On suppose que $\omega_{12} = 0$ dans le modèle \eqref{eq1}:
+    \begin{enumerate}
+        \item Commentez cette condition. 
+        \item Montrer qu’on a alors $\Cov[y_{2i}; u_{1i}]= 0$.
+        \item Quelles sont les implications de $\Cov[y_{2i}; u_{1i}]= 0$ pour $y_{2i}$ et pour l’estimation de $\bolda_0$?
+        \item Justifiez que $\omega_{12} = 0$ soit une condition peut vraisemblable dans le modèle.
+    \end{enumerate}
+    \item On suppose que dans le modèle \eqref{eq1} $a_{1, 0} = 0$ de sorte que l'on étudie:
+    \begin{align}
+        \left\{
+     \begin{array}{ll}
+        y_{1i} =  a_{2,0}z_{2i} + a_{3,0}y_{2i} +u_{1i}\\
+        y_{2i}= b_{1,0}z_{1i} + b_{2,0}z_{2i}+u_{2i}
+     \end{array}
+    \right.
+    &, \ \text{avec} \  \Exp[\boldu_i|\boldz_i] =0,  \text{et} \ \Exp[\boldu_i\boldu_i^\prime|\boldz_i]=\boldOmega
+    \label{eq2}
+     \end{align}
+     et on note:
+     \[
+        \bolda_0 \equiv 
+        \begin{bmatrix}
+            a_{2, 0}\\
+            a_{3, 0}
+        \end{bmatrix}
+    \]
+\begin{enumerate}
+    \item Qu’implique $a_{1,0}=0$ pour pour $z_{1i}$?
+    \item Qu’implique $a_{1,0}=0$ pour $y_{2i}$ dans l’équation de $y_{1i}$?
+    \item Montrer que $\boldb_0$ et $\bolda_0$ sont juste-identifiés dans le modèle \eqref{eq2} (à certaines conditions) ?
+    \item Proposer deux méthodes d’estimation de $\boldb_0$ et $\bolda_0$ et définir les estimateurs
+    (convergents) correspondants.
+    On utilisera les notations:
+    \[
+        \boldx_{1, i}\equiv \begin{bmatrix}
+            \boldz_{2i}, y_{2i}
+        \end{bmatrix}
+        \ \text{et} \
+        \boldX_1 \equiv  \begin{bmatrix}
+            \underline{\boldz}_2&\underline{\boldy}_2
+        \end{bmatrix}_{N\times 2}
+        \]
+\end{enumerate}
+\item On suppose que pour le modèle \eqref{eq1} $a_{1,0}= a_{2,0}= b_{2,0}=  0$. Montrez qu'alors 
+les estimateurs des VI et des MCI de $a_{3,0}$ et $b_{1,0}$ sont égaux.
+\end{enumerate}
+\newpage
+\subsection{Modèles non récursifs}
+Les vecteurs de variables aléatoires $(y_{1i} , y_{2i} , z_{1i} , z_{2i} , z_{3i})$ sont indépendants, identiquement
+distribués pour $i=1,\ldots, N$. Ils satisfont en outre les conditions de régularité requises 
+par les applications de la loi des grands nombres et du théorème central limite nécessaires 
+pour la normalité as. des estimateurs considérés (lorsqu’ils sont employés de manière pertinente).
+On considère ici différentes version du modèle suivant:
+\begin{align}
+    \left\{
+        \begin{array}{l}
+    y_{1i} =  a_{1,0}z_{1i}+ a_{2,0}z_{2i} + a_{3,0}z_{3i} + a_{4,0}y_{2i} + u_{1i}\\
+    y_{2i} = b_{1,0}z_{1i} + b_{2,0}z_{2i} + b_{3,0}z_{3i} + b_{4,0}y_{1i} + u_{2i}
+        \end{array}
+        \right. , 
+        \ \text{avec} \ \Exp[\boldu_i|\boldz_i] = 0 \ \text{et} \ \Exp[\boldu_i\boldu_i^\prime|\boldz_i]=\boldOmega
+        \label{eq3}
+\end{align}
+    On notera:
+\[
+    \boldy_i \equiv \begin{bmatrix}
+        y_{1i}\\
+        y_{2i}
+    \end{bmatrix}
+    , \
+    \boldz_i \equiv \begin{bmatrix}
+        z_{1i}\\
+        z_{2i}\\
+        z_{3i}
+    \end{bmatrix}
+    , \
+    \boldu_i \equiv \begin{bmatrix}
+        u_{1i}\\
+        u_{2i}
+    \end{bmatrix}
+    , \ 
+    \boldOmega \equiv \begin{bmatrix}
+        \omega_{11} & \omega_{12}\\
+        \omega_{12} & \omega_{22}
+    \end{bmatrix}
+    \]
+    et aussi:
+    \[
+    \bolda_0 \equiv \begin{bmatrix}
+        a_{1, 0}\\
+        a_{2, 0}\\
+        a_{3, 0}\\
+        a_{4, 0}
+        \end{bmatrix}    
+        , \  
+        \boldb_0 \equiv \begin{bmatrix}
+            b_{1, 0}\\
+            b_{2, 0}\\
+            b_{3, 0}\\
+            b_{4, 0}
+            \end{bmatrix}   
+            , \ 
+            \boldx_{1i} \equiv \begin{bmatrix}
+                \boldz_i\\
+                y_{2i}
+                \end{bmatrix}     
+                , \ 
+                \boldx_{2i} \equiv \begin{bmatrix}
+                    \boldz_i\\
+                    y_{1i}
+                    \end{bmatrix}     
+    \],
+    
+    et supposera que $\Var[\boldz_i]$ est inversible.
+\begin{enumerate}
+    \item Déterminer les variables exogènes et endogènes de chacune des équations
+    du système et du système.
+    \item Qualifier le modèle décrit par le système d’équations \eqref{eq3}.
+    \item Définir $\boldGamma_0$ et $\boldG_0$ pour écrire le modèle \eqref{eq3} sous la forme matrielle matricielle:
+    \begin{align*}
+    \boldGamma_0\boldy_i&= \boldG_0\boldz_i + \boldu_i.
+    \end{align*}
+    \item Déterminer la forme réduite du modèle \eqref{eq3} en la notant: 
+    \begin{align*}
+        \boldy_i &=\boldPi\boldz_i + \boldv_i,
+    \end{align*}
+où 
+
+\[\boldv_i \equiv \begin{bmatrix}
+v_{1i}\\
+v_{2i}
+\end{bmatrix}
+\]
+sont les erreur du modèle réduit. On utilisera aussi la notation:
+\[  
+    \boldPi \equiv \begin{bmatrix}
+        \pi_{11}& \pi_{12}& \pi_{13}\\
+        \pi_{21}& \pi_{22}& \pi_{23}
+    \end{bmatrix}
+    \equiv 
+    \begin{bmatrix}
+\boldpi_1^\prime\\
+\boldpi_2^\prime
+    \end{bmatrix}
+\]
+\item Analyser l’identification des paramètres $\boldb_0$ et $\bolda_0$.
+\item On suppose que dans le modèle \eqref{eq3} $a_{1,0}= a_{2,0}= a_{3,0}= 0$.
+\begin{enumerate}
+\item Montrer que $a_{4,0}$ est le seul élément identifiable de $\bolda_0$ et $\boldb_0$.  
+\item Proposer un estimateur convergent de $a_{4,0}$ et de $\omega_{11}$. On utilisera les notations:
+\[
+  \underline{\boldy}_k \equiv
+  \begin{bmatrix}
+      y_{k, 1}\\
+      \vdots\\
+      y_{k, N}
+  \end{bmatrix}_{N\times 1} 
+  \ \text{pour} \ k = 1, 2.
+\]
+
+et:
+
+\[
+    \underline{\boldz}_k \equiv
+    \begin{bmatrix}
+        z_{k, 1}\\
+        \vdots\\
+        z_{k, N}
+    \end{bmatrix}_{N\times 1} 
+    \ \text{pour} \ k = 1, 2, 3, \ \text{et aussi} \ 
+    \boldZ\equiv \begin{bmatrix}
+        \underline{\boldz}_1&\underline{\boldz}_2&\underline{\boldz}_3
+    \end{bmatrix}_{N\times 3} .
+\]
+\item Montrer que $\hat{a}_{4, N}^{2MC}$ utilise $\hat{\boldpi}_{2, N}^{MCO}$, l’estimateur des MCO de $\boldpi_2$ estdans la forme réduite 
+du modèle de $y_{2i}$.
+\item Montrer que $\hat{a}_{4, N}^{2MC}$ utilise un estimateur de la projection linéaire de $y_{2i}$ sur $\boldz_i$.
+\end{enumerate}
+\item On suppose maintenant que dans le modèle \eqref{eq3} $a_{1,0}= a_{2,0}=  0$ et $b_{3,0} = 0$.
+ Et on utilisera dorénavant les notations:
+
+ \[
+ \bolda_0 \equiv \begin{bmatrix}
+    a_{3, 0}\\
+    a_{4, 0}
+ \end{bmatrix}
+, \ 
+\boldb_0 \equiv \begin{bmatrix}
+    b_{1, 0}\\
+    b_{2, 0}\\
+    b_{4, 0}
+ \end{bmatrix}
+ , \ 
+ \boldx_{1i} \equiv \begin{bmatrix}
+    z_{3i}\\
+    y_{2i}
+ \end{bmatrix}
+ , \ 
+ \boldx_{2i} \equiv \begin{bmatrix}
+    z_{1i}\\
+    z_{2i}\\
+    y_{1i}
+ \end{bmatrix}.
+ \]
+ \begin{enumerate}
+\item Montrer que $\bolda_0 \equiv (a_{3,0}, a_{4,0})$ et $(\boldb_0 \equiv(b_{1,0},b_{2,0}, b_{4,0})$ sont 
+identifiables à priori.
+\item Proposer des estimateurs convergents et rapidement calculables de $\bolda_0$ et $\boldb_0$.
+\item Montrer que l’estimateur des 2MC de $\boldb_0$ dans l’équation de $y_{2i}$ 
+avec $\boldz_i$ pour vecteur d’instruments est égal à l’estimateur des VI correspondant. 
+\item Proposer un estimateur convergent de $\boldOmega$ et écrire la forme de cet estimateur.
+ \end{enumerate}
+ \item On suppose maintenant que dans \eqref{eq3} $a_{1,0} = a_{2,0}= a_{3,0}= b_{2,0}= b_{3,0}= b_{4,0}=0$.
+\begin{enumerate}
+\item Déterminer la forme réduite du modèle \eqref{eq3}) sous cette condition sur les paramètres. Cela sous la forme: 
+
+\begin{align*}
+ \boldy_i &= \boldpi z_{1i} + \boldv_i = \begin{bmatrix}
+     \pi_1\\
+     \pi_2
+ \end{bmatrix}
+ z_{1i}+ \boldv_i
+\end{align*}
+\item Déterminer les paramètres de la forme structurelle en fonction de ceux de la forme réduite 
+et en déduire l’estimateur des MCI de $a_{4, 0}$ noté $\hat{a}_{4, N}^{MCI}$.
+\item Déterminer la distribution as. du vecteur:
+\[\hat{\boldpi}_N \equiv
+    \begin{bmatrix}
+        \hat{\pi}_1^{MCO}\\
+        \hat{\pi}_2^{MCO}
+    \end{bmatrix}
+    \]
+    \item Utiliser la propriété suivante, dite "Méthode du delta", pour déterminer la distribution as. de
+    $\hat{a}_{4, N}^{MCI}$.
+
+    \begin{remarque}(\textbf{\underline{Rappel sur Méthode du Delta}})
+        Si:
+        \begin{align*}
+            \sqrt{N}\left(\bolda_N - \bolda_0\right)&\underset{N\to+\infty}{\liml} \mathcal{N}\left(\boldzero, \boldSigma_0\right).
+        \end{align*}
+        et si $\boldg(\bolda)$ est continûment différentiable sur le domaine de définition de $\bolda$ alors:
+\begin{align*}
+    \sqrt{N}\left(\boldg(\bolda_N)-\boldg(\bolda_0)\right)&\liml
+     \mathcal{N}\left(\boldzero, 
+    \frac{\partial \bold g}{\partial \bolda^\prime}(\bolda_0)\boldSigma_0 \frac{\partial \bold g}{\partial \bolda}(\bolda_0)^\prime\right).
+\end{align*}
+    \end{remarque}
+\end{enumerate}
+\end{enumerate}
+\bibliographystyle{jpe}
+\bibliography{../../Biblio.bib}
+ \end{document}

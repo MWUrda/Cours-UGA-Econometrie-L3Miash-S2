@@ -1,0 +1,4 @@
+\babel@toc {french}{}
+\contentsline {section}{\tocsection {}{1}{\IeC {\'E}quations simultan\IeC {\'e}es et 2MC }}{2}{section.1}
+\contentsline {section}{\tocsection {}{2}{\IeC {\'E}quations simultan\IeC {\'e}es et MMG}}{3}{section.2}
+\contentsline {section}{\tocsection {}{}{R\'ef\'erences}}{4}{section*.2}

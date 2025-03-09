@@ -1,0 +1,25 @@
+\begin{thebibliography}{3}
+\newcommand{\enquote}[1]{``#1''}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+
+\bibitem[{Angrist, Graddy, and Imbens(2000)}]{angrist2000}
+Angrist, Joshua~D., Kathryn Graddy, and Guido~W. Imbens. 2000.
+\newblock \enquote{The Interpretation of Instrumental Variables Estimators in
+  Simultaneous Equations Models with an Application to the Demand for Fish.}
+\newblock \emph{The Review of Economic Studies} 67~(3):pp. 499--527.
+\newblock \urlprefix\url{http://www.jstor.org/stable/2566964}.
+
+\bibitem[{Romer(1993)}]{RomerQJE1993}
+Romer, David. 1993.
+\newblock \enquote{{Openness and Inflation: Theory and Evidence*}.}
+\newblock \emph{The Quarterly Journal of Economics} 108~(4):869--903.
+\newblock \urlprefix\url{https://doi.org/10.2307/2118453}.
+
+\bibitem[{Wooldridge(2010)}]{Wooldridge2010}
+Wooldridge, Jeffrey~M. 2010.
+\newblock \emph{Econometric analysis of cross section and panel data}.
+\newblock The MIT Press.
+
+\end{thebibliography}

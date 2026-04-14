@@ -1,0 +1,5 @@
+\babel@toc {french}{}
+\beamer@sectionintoc {1}{Introduction}{3}{0}{1}
+\beamer@sectionintoc {2}{Mod\IeC {\`e}les Statiques}{20}{0}{2}
+\beamer@sectionintoc {3}{Estimation sous exog\IeC {\'e}n\IeC {\'e}it\IeC {\'e} par rapport aux effets individuels}{32}{0}{3}
+\beamer@sectionintoc {4}{Estimation sans contrainte sur les effets individuels: "diff\IeC {\'e}rences premi\IeC {\`e}res", "within", etc}{40}{0}{4}

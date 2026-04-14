@@ -1,0 +1,125 @@
+\input{../../../Preambule}
+\newcommand{\bxi}{ \boldx_i }
+\usepackage{tikz}
+\usepackage{enumitem}
+\usepackage{txfonts}
+\usepackage{mathrsfs}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+%\renewcommand{\subsection{mark}[1]{\markright{#1}{}}
+\fancyhead{}
+\fancyfoot{} 
+%\fancyhead[LE,LO]{\tiny{\thepage}}
+\fancyhead[C]{\small\textsc{Économétrie}}
+%fancyhead[CE,CO]{\tiny{\rightmark}}
+\fancyhead[L]{\small\textsc{UGA}}
+\fancyfoot[C]{\small{\thepage}}
+%\fancyfoot[R]{\small \textcopyright \ \  \small\textsc
+\fancyhead[R]{ \small\textsc{M. Urdanivia}}
+%\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+%\pagenumbering{roman}
+
+
+\begin{document} 
+\usetikzlibrary{positioning}
+\usetikzlibrary{snakes}
+\usetikzlibrary{calc}
+\usetikzlibrary{arrows}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{shapes.misc}
+\usetikzlibrary{shapes}
+%\tikzset{block/.style={draw, rectangle, fill=gray!20, 
+%\tikzset{empty/.style={draw, rectangle, fill=none, tex
+%\tikzset{line/.style={draw, -latex'}}
+%\onehalfspace
+
+\begin{titlepage}
+\centering
+	%\includegraphics[width=0.15\textwidth]{logoUGA2020
+	{\scshape\Large \textsc{Économétrie: UGA}\par}
+	\vspace{1cm}
+	%{\scshape\large \textsc{Extremum Estimators(1)}\par}
+	%\vspace{1cm}
+	{\Large\bfseries \textsc{8: MODÈLES LINÉAIRES POUR DONNÉES DE PANEL} \par}
+    \vspace{1cm}   
+    {\Large\bfseries \textsc{Application} \par}
+	\vspace{1cm}
+	{(\textsc{Cette version: \today})\par}
+	\vspace{1cm}
+	{\large \textsc{Michal Urdanivia}
+	\footnote{Contact:  
+	\href{mailto:michal.wong-urdanivia@univ-grenoble-alpes.fr}{michal.wong-urdanivia@univ-grenoble-alpes.fr}, 
+	 Université de Grenoble Alpes,  Faculté d'\'Economie, GAEL.}\par}
+	%\vfill
+	%supervised by\par
+	%Dr.~Mark \textsc{Brown}
+%\vfill
+% Bottom of the page
+	
+\end{titlepage}
+
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+%\pagenumbering{arabic}
+%\section{*{Objectifs du chapitre}
+
+\section{Panel statiques}\footnote{Cette première partie reprend un exercice du cours d'Emmanuel Flachaire 
+\href{https://sites.google.com/site/emmanuelflachaire/cours/econometrie-appliquee}{d'économétrie appliquée}
+lui même issu d'un exercice dans Introduction to Econometrics de Stock et Watson.}
+
+\subsection{Introduction}
+Certains états des États-Unis ont acté des lois autorisant le port d'armes de ses citoyens,
+mentalement compétents et sans casier judiciaire, appelées lois "shall-issue" ou "shall-carry".
+Les lois sur l'émission du permis de port d'armes ont généré des débats sans fin. Ses partisans
+considèrent que le port d'arme est une manière de dissuader les criminels, alors que ses
+opposants affirment, au contraire, qu'il ne fait qu'accentuer la criminalité. Dans cet exercice,
+nous tenterons d'analyser l'effet des lois sur l'émission du permis de port d'armes sur la
+criminalité. Le fichier de données\footnote{Ces données ont été fournies par le professeur John Donohue de Stanford University et ont été utilisées dans 
+\cite{AyresDonohueNBERw9336}.} est disponible sur le site de Mark Watson sous forme de fichier "Zip" avec les données et une description de celles-ci. Pour le récupérer allez ici: \\
+\url{https://www.princeton.edu/~mwatson/Stock-Watson_4E/Guns.zip}\\
+Il contient un panel cylindré de 50 États des États-Unis, plus le district de Columbia, pour la
+période 1977-1999.
+
+\subsection{Questions}
+\begin{enumerate}
+\item Estimez : 
+\begin{enumerate}
+\item la régression de $\mathrm{ln(vio)}$ sur $\mathrm{shall}$;\label{reg1}
+\item la régression de $\mathrm{ln(vio)}$ ) sur $\mathrm{shall}$, $\mathrm{incarc\_rate}$, $\mathrm{density}$, $\mathrm{avginc}$, $\mathrm{pop}$, $\mathrm{pb1064}$, $\mathrm{pw1064}$ et $\mathrm{pm1029}$\label{reg2}.
+\end{enumerate}
+\item Interprétez le coefficient associé à $\mathrm{shall}$ dans la régression \ref{reg1} . Dans le contexte
+réel, la valeur de ce paramètre estimé est-elle élevée ou faible?
+\item L'ajout de variables de contrôle dans le modèle \ref{reg2} peut-il affecter l'effet de la loi
+sur l'émission du permis de port d'armes ($\mathrm{shall}$) de la régression \ref{reg1} , en termes
+de signification statistique ? Et en termes d'effet du paramètre estimé, dans le
+contexte réel ?
+\item Proposez une variable qui varie entre les États mais change probablement peu (ou
+pas) avec le temps, et qui pourrait générer un biais d'omission dans la régression \ref{reg2} .
+\item Écrire le modèle sous la forme d'un modèle pour données de panel avec seulement des effets individuels, 
+et supposant que les effets fixes temporels font partie des régresseurs sous la forme de dummies.
+\item Estimez le modèle sous une hypothèses d'effets aléatoires en rappelant le contenu de celle-ci(rappel: il s'agit 
+en fait de l'estimateur des MCO dans les questions précédentes, mais vous pouvez en utiliser un plus efficace-voir cours-).
+\item Estimez le modèle selon une hypothèse d'effets fixes en rappelant le contenu de celle-ci. L'estimateur peut être par exemple celui "within".
+ Faîtes cela sans les dummies temporelles, et avec celles-ci. 
+ \item Comparez vos différents résultats,
+et précisez quels résultats sont selon vous les plus fiables, en argumentant(remarque: utilisez des écart-types 
+estimés robustes).
+\item Selon vous, quelles sont les principales menaces qui risquent de remettre en cause la
+validité interne de cette analyse?
+\item En vous basant sur votre analyse, quelles sont les conclusions que 
+vous pourriez concevoir concernant l'effet de la loi sur l'émission du permis de port d'armes sur les taux
+de criminalité ?
+\end{enumerate}
+\begin{theoreme}
+jj
+\end{theoreme}
+\bibliographystyle{jpe}
+\bibliography{../../../Biblio.bib}
+ \end{document}

@@ -1,0 +1,13 @@
+\begin{thebibliography}{1}
+\newcommand{\enquote}[1]{``#1''}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+
+\bibitem[{Ayres and Donohue(2002)}]{AyresDonohueNBERw9336}
+Ayres, Ian and III Donohue, John~J. 2002.
+\newblock \enquote{Shooting Down the More Guns, Less Crime Hypothesis.}
+\newblock Working Paper 9336, National Bureau of Economic Research.
+\newblock \urlprefix\url{http://www.nber.org/papers/w9336}.
+
+\end{thebibliography}

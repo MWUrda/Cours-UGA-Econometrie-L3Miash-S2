@@ -1,0 +1,34 @@
+\begin{thebibliography}{4}
+\newcommand{\enquote}[1]{``#1''}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+
+\bibitem[{Chamberlain(1984)}]{CHAMBERLAIN19841247}
+Chamberlain, Gary. 1984.
+\newblock \enquote{Chapter 22 Panel data.}
+\newblock Elsevier, 1247--1318.
+\newblock
+  \urlprefix\url{https://www.sciencedirect.com/science/article/pii/S1573441284020146}.
+
+\bibitem[{Chamberlain(2010)}]{Chamberlain2010}
+---{}---{}---. 2010.
+\newblock \enquote{Binary response models for panel data: Identification and
+  information.}
+\newblock \emph{Econometrica} 78~(1):159–168.
+
+\bibitem[{Neyman and Scott(1948)}]{NeymanScott1948}
+Neyman, J and E.~L. Scott. 1948.
+\newblock \enquote{Consistent estimates based on partially consistent
+  observations.}
+\newblock \emph{Econometrica} 16:1--32.
+
+\bibitem[{Sargent(1978)}]{Sargent1978}
+Sargent, Thomas. 1978.
+\newblock \enquote{Estimation of Dynamic Labor Demand Schedules under Rational
+  Expectations.}
+\newblock \emph{Journal of Political Economy} 86~(6):1009--44.
+\newblock
+  \urlprefix\url{https://EconPapers.repec.org/RePEc:ucp:jpolec:v:86:y:1978:i:6:p:1009-44}.
+
+\end{thebibliography}

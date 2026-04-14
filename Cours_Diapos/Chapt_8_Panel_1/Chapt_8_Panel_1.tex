@@ -1,0 +1,970 @@
+%\documentclass[ignorenonframetext, compress, 9pt, xcolor=svgnames]{beamer} 
+\input{Config_diapos}
+\usepackage[svgnames]{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows}
+\usepackage{enumerate}   
+\usepackage{multirow}
+\usepackage{txfonts}
+\usepackage{mathrsfs}
+\usepackage{pgfplots}
+\usepackage{systeme}
+\pgfplotsset{compat = newest}
+\usetikzlibrary{positioning, arrows.meta}
+\usepgfplotslibrary{fillbetween}
+\newcommand{\A}{(0,0) ++(135:2) circle (2)}
+\newcommand{\B}{(0,0) ++(45:2) circle (2)}
+\DeclareMathOperator{\C}{C}
+\DeclareMathOperator{\util}{u}
+%\setbeamersize{text margin left=1.5em,text margin right=1.5em} 
+%\setbeamersize{text margin left=1.2cm,text margin right=1.2cm} 
+\setbeamersize{text margin left=1.5em,text margin right=1.5em} 
+%\usepackage{xr}
+%\externaldocument{Econometrie1_UGA_P2e}
+  \usepackage{eso-pic}
+%\newcommand\AtPagemyUpperLeft[1]{\AtPageLowerLeft{%
+%\put(\LenToUnit{0.9\paperwidth},\LenToUnit{0.85\paperheight}){#1}}}
+%\AddToShipoutPictureFG{
+ % \AtPagemyUpperLeft{{\includegraphics[width=1.1cm,keepaspectratio]{logoUGA2020.pdf}}}
+%}%
+
+%\setbeamercolor{title}{fg=black}
+%\setbeamercolor{frametitle}{fg=black}
+%\setbeamercolor{section in head/foot}{fg=black}
+%\setbeamercolor{author in head/foot}{bg=Brown}
+%\setbeamercolor{date in head/foot}{fg=Brown}
+\AtBeginSection[]
+  {
+    \ifnum \value{framenumber}>1
+      \begin{frame}<beamer>
+      \frametitle{PLAN}
+      \tableofcontents[currentsection]
+      \end{frame}
+    \else
+    \fi
+  }
+\setbeamertemplate{section page}
+{
+    \begin{centering}
+    \begin{beamercolorbox}[sep=11pt,center]{part title}
+    \usebeamerfont{section title}\thesection.~\insertsection\par
+    \end{beamercolorbox}
+    \end{centering}
+}
+\title[Regression linéaire]{\textbf{ \'ECONOM\'ETRIE \\ (UGA, S2)}}
+\subtitle{\textbf{CHAPITRE 8:\\ MODÈLES LINÉAIRES POUR DONNÉES DE PANEL }}
+\date{\today}
+\author{Michal W. Urdanivia\inst{*}}
+\institute{\inst{*}UGA, Facult\'e d'\'Economie, GAEL, \\
+e-mail:
+ \href{
+     mailto:michal.wong-urdanivia@univ-grenoble-alpes.fr}{michal.wong-urdanivia@univ-grenoble-alpes.fr}}
+
+%\titlegraphic{\includegraphics[width=1cm]{logoUGA2020.pdf}
+%}
+
+
+\begin{document}
+
+%%% TIKZ STUFF
+\usetikzlibrary{positioning}
+\usetikzlibrary{snakes}
+\usetikzlibrary{calc}
+\usetikzlibrary{arrows}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{shapes.misc}
+\usetikzlibrary{matrix,shapes,arrows,fit,tikzmark}
+\usetikzlibrary{matrix,chains,positioning,decorations.pathreplacing,arrows}
+\usetikzlibrary{shapes}
+\usetikzlibrary{shapes.geometric, arrows}
+\tikzset{   
+        every picture/.style={remember picture,baseline},
+        every node/.style={anchor=base,align=center,outer sep=1.5pt},
+        every path/.style={thick},
+        }
+\newcommand\marktopleft[1]{
+    \tikz[overlay,remember picture] 
+        \node (marker-#1-a) at (-.3em,.3em) {};%
+}
+\newcommand\markbottomright[2]{%
+    \tikz[overlay,remember picture] 
+        \node (marker-#1-b) at (0em,0em) {};%
+}
+\tikzstyle{every picture}+=[remember picture] 
+\tikzstyle{mybox} =[draw=black, very thick, rectangle, inner sep=10pt, inner ysep=20pt]
+\tikzstyle{fancytitle} =[draw=black,fill=red, text=white]
+\tikzstyle{observed}=[draw,circle,fill=gray!50]
+
+\begin{frame}
+\titlepage
+\end{frame}
+\begin{frame}
+ \tableofcontents
+    \end{frame}
+%\begin{frame}
+%\frametitle{Contenu}
+%\tableofcontents[pausesections, pausesubsections]
+%\end{frame}
+
+
+%\section{Qu'est-ce que l’économétrie ? A quoi (à qui) ça sert ?}
+%\frame{\sectionpage}
+%\begin{frame}
+%  \tableofcontents  
+%\end{frame}
+
+\section{Introduction}
+\frame{\sectionpage}
+\begin{frame}[allowframebreaks]{Données de panel}
+\begin{itemize}
+\item Les données de panel sont issues de l'observation d'unités d'observation (e.g., ménages, entreprises, personnes, pays, \ldots)
+ au cours de plusieurs périodes. 
+ \item Traditionnellement les unités sont appelées \emph{individus} et nous adopterons cette pratique.
+\item Ainsi si $\boldw$ est un vecteur de variables dont les observation correspondent à un panel, 
+les observations/données seront:
+\begin{align*}
+    \left\{\boldw_{it} : i = 1, \ldots N; t\in\{1, \ldots, T\}\right\}
+\end{align*}
+où:
+\begin{enumerate}[$\star$]
+    \item $i$ est l'indice des individus,
+    \item $t$ est l'indice des périodes,
+    \item $N$ est le nombre d'individus,
+    \item $T$ est le plus grand nombre de périodes d'observation dans le panel.
+\end{enumerate}
+\end{itemize}
+
+\end{frame}
+\begin{frame}[allowframebreaks]{Remarques}
+\begin{remark_fr}
+\begin{enumerate}[$\star$]
+\item Quand tous les individus sont observés un même nombre de périodes, 
+leur nombre de périodes d'observation  $T_i$ est donc le même et égal à $T$. Plus précisément on distingue:
+\begin{enumerate}[-]
+    \item les panels cylindrés qui correspondent $T_i = T$, pour tout $i=1, \ldots, N$,
+    \item les panels non-cylindrés qui correspondent $T_i \neq T$ pour au moins un individu.
+\end{enumerate}
+\item Dans un panel non-cylindré les individus peuvent commencer à être observés à des périodes différentes:
+\[
+\begin{array}{l|llll}
+    &\multicolumn{4}{c}{T}\\
+    \hline
+i=1&\cdot&\boldw_{11}&\boldw_{12}&\cdot\\
+i=2&\boldw_{21}&\boldw_{22}&\boldw_{23}&\boldw_{24}\\
+i=3&\cdot&\cdot&\boldw_{32}&\boldw_{34}\\
+i=4&\cdot&\boldw_{42}&\boldw_{43}&\boldw_{44}
+\end{array}
+\]
+\item Des extension à plus de 2 dimensions sont possibles, e.g., données employeur-employé où 
+les individus sont observés au cours du temps et dans les différentes emplois occupés.
+\item Il est possible d'ignorer la distinction entre panel cylindrés et non-cylindrés 
+tant que les observations manquantes dans ce derniers le sont de façon aléatoire.
+\end{enumerate}
+\end{remark_fr}
+\framebreak
+
+\begin{remark_fr}
+\begin{enumerate}[$\star$]
+    \item Il est commun dans un cours d'économétrie sur les données de panel de (commencer par) 
+    considérer les cas où $N$ est grand relativement à $T$. Les raisonnements et résultats asymptotiques sont 
+    alors obtenus pour $N\rightarrow +\infty$. Cela concerne souvent des panel microéconomiques(e.g., 
+    sur des ménages, entreprises, personnes).
+    \item Pour ce qui concerne les modèles statiques que nous étudierons pour commencer, 
+    tous les résultats qui seront présentés s'appliquent au cas inverse où $N$ est relativement petit 
+    par rapport $T$ et où on suppose que $T\rightarrow +\infty$(il faut néanmoins interchanger $N$ et $T$ dans les formules).
+\end{enumerate}
+\end{remark_fr}
+
+\framebreak
+
+\begin{remark_fr}
+\begin{enumerate}[$\star$]
+    \item Les données de panel ne sont pas les fait d'avoir des observations sur plusieurs périodes, 
+    c.à.d., des 
+    \emph{données en coupe répétées}. Ce sont des données où \emph{les mêmes individus 
+    sont suivis au cours de différentes périodes}.  
+    \item Nous verrons que cette caractéristique offre la possibilité de contrôler 
+    l'hétérogénéité entre les individus et notamment les problèmes d'endogénéité 
+    qu'elle peut générer. 
+    \item Par rapport au données en coupe et au séries temporelles, les données de panel 
+    permettent de corriger les corrélation fallacieuses résultant de variables omises/inobservables.
+     Pour cela:
+    \begin{enumerate}[-]
+        \item On distingue une hétérogénéité inobservée dans la dimension individuelle du panel, 
+        et une hétérogénéité inobservée dans la dimension temporelle. 
+        \item Supposer que l'hétérogénéité individuelle inobservée est constante 
+        dans la dimension temporelle et que l'hétérogénéité temporelle 
+        est constante dans la dimension individuelle permet de contrôler 
+        les biais qu'elles peuvent générer.
+        \item Quand on suppose $N$ grand relativement à $T$ et $N\rightarrow +\infty$ pour les raisonnements
+        asymptotiques il est courant de ne se concentrer que sur l'hétérogénéité individuelle.
+    \end{enumerate}
+\end{enumerate}
+\end{remark_fr}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Exemple: fonction de production agricole}
+    \begin{itemize}
+        \item Soit une fonction de production agricole Cobb-Douglas 'log-linéairisée":
+        \begin{align}
+            y_i &= a_{0, 0} + a_{1, 0}l_i + a_{2, 0}k_i + u_i,
+            \label{eq1}
+        \end{align}
+        où pour une entreprise $i$: 
+        \begin{enumerate}[$\star$]
+        \item $y_i$ le (log) du niveau de production, 
+        \item $l_i$ et $k_i$ sont les logs de deux facteurs de production,
+         travail et capital, 
+         \item $u_i$ capte l'ensemble des facteurs de production inobservées(qualité du sol, qualités/capacités
+         inobservées du travail, \ldots). 
+        \end{enumerate}
+         \item Ces facteurs inobservées peuvent être corrélés avec les facteurs observées:
+         \[\Cov[u_i; l_i] \neq 0, \ \Cov[u_i; k_i] \neq 0\]
+         Par exemple $\Cov(u_i; l_i)> 0$ si $u_i$ représente une qualité du travail associée 
+         à une plus grande productivité.
+         \item On sait que dans ce cas(voir cours passés), l'estimateur des MCO des paramètres $a_{0, 0},,a_{1, 0}, a_{2, 0}$, 
+         ne sera pas convergent.
+         \framebreak
+         \item Considérons la version suivante de l'équation précédente sur données de panel:
+         \begin{align}
+            y_{it} &= a_{0, 0} + a_{1, 0}l_{it} + a_{2, 0}k_{it} + \underbrace{u_{it}}_{=\alpha_i + \gamma_t + \varepsilon_{it}},
+            \label{eq2}
+        \end{align}
+        où dans la décomposition de $u_{it}$: 
+        \begin{enumerate}[$\star$]
+        \item $\alpha_i$ les facteurs de production inobservés invariants dans la dimension temporelle,
+        \item $\gamma_t$ des chocs temporels inobservés communs à toutes les entreprises, 
+        \item $\varepsilon_{it}$ 
+        est un choc temporel inobservée spécifique à la firme $i$. 
+        \end{enumerate}
+        \item Les différences premières entre $t$ et $t-1$ associées à l'équation de $y_{it}$ dans \eqref{eq2} sont:
+        \begin{align}
+            \Delta y_{it} &= a_{1, 0}\Delta l_{it} + a_{2, 0}\Delta k_{it} + \Delta \gamma_t +\Delta \varepsilon_{it}.
+            \label{eq3}
+        \end{align}
+        \item Pour $N\rightarrow +\infty$ et $T$ fixe l'estimateur des MCO des paramètres 
+        de \eqref{eq3} est convergent dès lors en particulier que les régresseurs 
+        en différences premières sont exogènes par rapport à $\Delta \varepsilon_{it}$.
+        \item Notons que même avec des régresseurs en différences premières  endogènes
+         on peut utiliser les donner de panel pour obtenir des estimateurs de VIs(exploitant la 
+         causalité au sens de Granger) des paramètres.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    [allowframebreaks]{Exemple: demande de travail dynamique}
+    \begin{itemize}
+    \item\cite{Sargent1978} considère l'équation suivante pour représenter la demande de travail 
+    d'une firme représentative(equation d'Euler):
+    \begin{align*}
+        \Delta l_t &= a_{0, 0} +  a_{1, 0}\Delta l_{t-1} + a_{2, 0}w_t+ a_{3, 0}\frac{y_t}{l_t}  
+        + \underbrace{u_t}_{= \gamma_t + \varepsilon_t},
+    \end{align*}
+    où:
+    \begin{enumerate}[$\star$]
+        \item  $\Delta l_t$, $w_t$, et $y_t$ sont respectivement la variation de l'emploi, le taux de salaire, 
+        et le niveau de production, 
+        \item $\varepsilon_t$ est un terme d'erreur orthogonal à l'information en $t$ ou avant $t$.
+        \item $\gamma_t$ est une composante du profit marginal de la firme inobservé 
+        du point de vue de l'analyste mais observé par la firme.
+        \item Cette dernière composante dans le terme d'erreur $u_t$ peut être corrélée 
+        aux régresseurs de sorte que l'estimateur des MCO des paramètres ne sera pas convergent.
+        \item Supposons que l'équation précédente soit spécifiée pour des données de panel:
+        \begin{align*}
+            \Delta l_{it} &= a_{0, 0} +  a_{1, 0}\Delta l_{i, t-1} + a_{2, 0}w_{it}+ a_{3, 0}\frac{y_{it}}{l_{it}}  
+            + \underbrace{u_{it}}_{= \alpha_i + \gamma_{t} + \varepsilon_{it}},
+        \end{align*}
+        où l'on suppose l'absence de corrélation sérielle pour $\varepsilon_{it}$.
+        \item Les différence premières sur cette équation donnent:
+        \begin{align*}
+            \Delta^2 l_{it} &= a_{1, 0}\Delta^2 l_{i, t-1} + a_{2, 0}\Delta w_{it}+ a_{3, 0}\Delta \frac{y_{it}}{l_{it}} 
+            + \Delta \gamma_t + \Delta \varepsilon_{it},
+        \end{align*}
+        que l'on peut estimer par VIs et/ou la MMG.
+    \end{enumerate}
+
+    \end{itemize}
+\end{frame}
+\begin{frame}[allowframebreaks]{Un modèle général pour données de panel}
+\begin{itemize}
+    \item Considérons le modèle:
+    \begin{align}
+        y_{it}&= f(\bold\boldx_{it}, u_{it}, \bolda_0)
+        \label{eq4}
+    \end{align}
+    où:
+    \begin{enumerate}[$\star$]
+    \item $f(\cdot)$ est une fonction connue,
+    \item $\bolda_0$ est un vecteur de paramètres inconnus,
+    \item $\bold\boldx_{it}$ est un vecteur de variables explicatives observées; 
+    \item $u_{it}$ représente les déterminants inobservés.
+    \end{enumerate}
+     \item  Suivant ce qui a été indiqué dans les exemples, une spécification 
+     courante pour $u_{it}$ est:
+     \begin{align}
+        u_{it} &=\alpha_i + \gamma_t + \varepsilon_{it}.
+        \label{eq5}
+     \end{align}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Problème du paramètre incident}
+\begin{itemize}
+    \item Dans un modèle pour données de panel où les erreurs se décomposent comme dans \eqref{eq5}, 
+    $\alpha_1, \ldots, \alpha_N$, et $\gamma_1, \ldots, \gamma_T$ peuvent être traités comme des 
+    paramètres à estimer. 
+    \item En ce sens il peuvent être vus comme mesurant les effets de $N-1$ 
+    dummies individuelles et $T-1$ dummies temporelles. 
+    \item Dans un cadre où l'on suppose que $N\rightarrow +\infty$ et que $T$ est fixe, 
+    le nombre de paramètres $\alpha_1, \ldots, \alpha_N$ augmentera à la même 
+    vitesse que $N$ ce qui empêche d'en obtenir des estimateurs convergents.
+    \item Cela peut en outre compromettre l'estimation convergente de $\bolda_0$.
+    
+    \framebreak
+
+    \item \textbf{Plus généralement}:
+    \begin{enumerate}[$\star$]
+    \item Étant donné un modèle caractérisé par des paramètres 
+    $\boldtheta_0$ et un échantillon de $N$ observations, 
+    \item on est en présence d'un problème de paramètre incident si:
+    \[
+        \text{quand} \ N \rightarrow +\infty \ \text{nous avons} \ \dim(\boldtheta_0) \rightarrow +\infty.
+    \]
+    \item \cite{NeymanScott1948} établissent qu'en règle général on ne peut avoir d'estimateur convergent 
+    de $\boldtheta$.
+    \item Supposons que $\boldtheta_0  = (\boldalpha, \bolda_0)$ où 
+    $\boldalpha$ est le vecteur d'éléments $\alpha_1, \ldots, \alpha_N$, 
+    et que $N\rightarrow+\infty$ alors bien que $\dim(\bolda_0)$ demeure fixe 
+    $\dim(\boldalpha)\rightarrow+\infty$.
+    \item La question qui se pose concerne la possibilité d'avoir des estimateurs convergents de 
+    $\bolda_0$ bien que ceux de $\alpha$ ne puissent pas l'être.
+    \end{enumerate}
+\end{itemize}
+\end{frame}
+\begin{frame}[allowframebreaks]{Types de modèles pour données de panel}
+\begin{itemize} 
+    \item Il est  utile de distinguer des types différents de modèles pour données de panel car 
+    les méthodes d'estimation présentent souvent des propriétés différentes selon le type de modèle considéré.  
+    \item Cette distinction s'appuie sur deux critères:
+    \begin{enumerate}
+        \item additivité/non-additivité des erreurs,
+        \item modèles statiques/dynamiques.
+    \end{enumerate}
+\end{itemize}
+\end{frame}
+\begin{frame}[allowframebreaks]{additivité/non-additivité des erreurs}
+        \begin{itemize}
+            \item Par exemple:
+            \begin{align*}
+                y_{it}&= h(\bold\boldx_{it}, \bolda_0) + u_{it} \ (\text{exemple d'erreurs additifs}),\\
+                y_{it}&=\max\left\{ \bold\boldx_{it}\bolda_0 + u_{it}; 0\right\} \ (\text{exemple d'erreurs non-additifs}).
+            \end{align*}
+            \item Le problème du paramètre incident se présente de manière différentes
+             selon que les erreurs sont additifs ou non.
+             \item Un cas important sont les modèles non-linéaires statiques où 
+             les erreurs sont non-additifs et où l'estimateur à effets 
+             fixes qui est convergent dans le cas des modèles linéaires statiques ne l'est plus.
+        \end{itemize}
+    \end{frame}
+
+        \begin{frame}[allowframebreaks]{Modèles statiques/non-statiques}
+            \begin{itemize}
+            \item Cette distinction dépends de la relation entre les variables $\{\bold\boldx_{it}\}$ et 
+            les composantes $\{\varepsilon_{it}\}$ du modèle. 
+            \item Dans un \textbf{modèle statique} $\bold\boldx_{it}$ est supposé \textbf{strictement exogène} par quoi 
+            on entends qu'en $t$ il n'inclut pas des variables endogènes \emph{retardées}(c.à.d, correspondant aux périodes précédentes:
+            \begin{align*}
+                \Exp[u_{it}\boldx_{i, t+ s}]&=0 \ \text{pour tout} \ s\in\{\ldots, -2, -1, 0, 1, 2, \dots\}.
+            \end{align*}
+            \item Dans un \textbf{modèle dynamique} les variables endogènes retardées peuvent faire partie 
+            des régresseurs. Par exemple $y_{i, t-1}$ peut faire partie de $\bold\boldx_{it}$. Comme alors 
+            $\boldx_{i, t+1}$ inclut $y_{it}$,
+            \begin{align*}
+                \Exp[u_{it}\boldx_{i, t+s}]&\neq 0.
+            \end{align*}
+            Et des estimateurs convergents et efficaces pour des modèles statiques 
+            ne sont même plus convergents dans le cas de modèles dynamique
+\end{itemize}
+\end{frame}
+
+\section{Modèles Statiques}
+\frame{\sectionpage}
+
+\begin{frame}[allowframebreaks]{Modèle}
+    \begin{itemize}
+        \item Considérons l'équation suivante d'un modèle pour données de panel:
+
+        \begin{align}
+        y_{it}&=\boldx_{it}^\prime\bolda_0+ u_{it}, \ u_{it} = \alpha_i + \gamma_t + \varepsilon_{it}.
+        \label{eq6}
+        \end{align}
+        où: 
+        \begin{enumerate}[$\star$]
+        \item $\boldx_{it}$ est vecteur $K \times 1$ de régresseurs, 
+        auquel on associe un vecteur de paramètres $\bolda_0$,
+        \item $\alpha_i$ représente l'hétérogénéité inobservée dans la dimension 
+        individuelle, souvent appelé \emph{effet fixe individuel},
+        \item $\gamma_t$ représente l'hétérogénéité inobservée dans la dimension 
+        temporelle, souvent appelé \emph{effet fixe temporel},
+        \item $\varepsilon_{it}$ est l'hétérogénéité inobservée 
+        variable dans le temps et entre les individus.
+        \end{enumerate}       
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Dummies temporelles}
+    \begin{itemize}
+        \item Nous allons considérer les cas où $T$ et relativement petit par rapport à $N$ avec 
+        $N\rightarrow +\infty$ pour les analyses asymptotiques. 
+        \item Ce faisant pour faciliter l'écriture du modèle, il nous pouvons adopter 
+        une notation qui permettent d'inclure les paramètres $\{\gamma_t\}_{t=1}^T$ dans $\bolda_0$.
+        \item Pour cela nous allons considérons un indicatrice temporelle $d_{it}^s$ pour  la période $s$ telle que:
+        \begin{align*}
+        d_{it}^s = 1 \quad \textrm{si} \quad t = s; \quad \textrm{et} \quad D_{it}^s = 0 \quad \textrm{si}\quad t \neq s
+        \end{align*}
+        alors,
+\begin{align*}
+\gamma_t  = \sum_{s=1}^Td_{it}^s\gamma_s = \left[d_{it}^1, d_{it}^2, \ldots, d_{it}^T\right]\boldgamma 
+= \boldd_{it}^\prime \boldgamma
+\end{align*}
+où $\boldgamma$ est le vecteur $T\times 1$ défini par $\boldgamma \equiv (\gamma_1, \gamma_2, \ldots, \gamma_T)^\prime$.
+\item On peut alors écrire \eqref{eq6}:
+\begin{align*}
+    y_{it}&=\begin{bmatrix}
+\boldx_{it}&\boldd_{it}
+    \end{bmatrix}^\prime
+    \begin{bmatrix}
+        \bolda_0\\
+        \boldgamma 
+    \end{bmatrix}
+    + \alpha_i + \varepsilon_{it}
+\end{align*}
+qui est la version de \eqref{eq6} avec les effets temporels pris en compte par le bias d'un 
+vecteur de régresseurs incluant des dummies temporelles.  
+\item Pour ne pas alourdir les notations nous allons écrire cette équation simplement: 
+\begin{align}
+    y_{it}&=\boldx_{it}^\prime\bolda_0 + \alpha_i + \varepsilon_{it},
+    \label{eq7}
+\end{align}
+pour laquelle il sera entendu que $\boldx_{it}$ inclue des dummies temporelles, et 
+que $\bolda_0$ inclue $\boldgamma$.
+\item Comme nous supposons que $T$ et petit relativement à $N$ avec $N\rightarrow +\infty$ 
+le problème du paramètre incident provient seulement de $\alpha_1, \ldots, \alpha_N$.
+\item Une démarche similaire peut être adopté dans le cas où $T$ 
+est grand relativement à $N$ et $T\rightarrow +\infty$.
+
+\framebreak 
+
+\item Le  modèle peut être présenté comme un système de $T$ equations(une equation pour  $t=1, 2, \ldots, T$) 
+avec $n$ observations pour chacune des équations du système.
+\begin{align*}
+y_{i1} &= \boldx_{i1}^\prime\beta + \alpha_i + \varepsilon_{it}\\
+y_{i2} &= \boldx_{i2}^\prime\beta + \alpha_i + \varepsilon_{i2}\\
+ \vdots &\\
+ y_{iT} &= \boldx_{iT}^\prime\beta + \alpha_i + \varepsilon_{iT}    
+\end{align*}
+\item Sous forme vectorielle on peut écrire:
+\begin{align*}
+\boldy_i &= \boldX_i\beta + \boldone_T\alpha_i +\boldvepsilon_i\
+\end{align*}
+où
+\begin{enumerate}[$\star$]
+\item  $\boldy_i $ et $\boldvepsilon_i$   sont de vecteurs $T\times 1$, 
+\item $\boldone_T$ est un vecteur  $T\times 1$ avec tous ses éléments égaux à 1; 
+\item $\boldX_i$ est une matrice  $T\times K$. 
+\end{enumerate}
+
+\framebreak 
+
+\item Une notation similaire peut être utilisée pour des panels non-cylindrés.
+\begin{enumerate}[$\star$]
+\item Soit  $w_{it} \in\{0, 1\}$; une indicatrice pour l'événement  "l'individu $i$ est observé à la période $t$". 
+\item Alors:
+\begin{align*}
+\boldy_i &= \boldX_i \bolda_0 + \boldw_i \alpha_i + \boldvepsilon_i,
+\end{align*}
+où:
+\begin{align*}
+    \underset{T\times 1}{\boldy_i} &= \begin{bmatrix}
+    w_{i1}y_{i1}\\
+    w_{i2}y_{i2}\\
+    \vdots\\
+    w_{iT}y_{iT}
+    \end{bmatrix}
+    \quad , \quad
+    \underset{T\times K}{\boldX_i} =  \begin{bmatrix}
+    w_{i1}\boldx_{i1}^\prime\\
+    w_{i2}\boldx_{i2}^\prime\\
+    \vdots\\
+    w_{iT}\boldx_{iT}^\prime
+    \end{bmatrix}
+    \quad , \quad
+\underset{T\times 1}{\boldw_i} = \begin{bmatrix}
+w_{i1}\\
+w_{i2}\\
+\vdots\\
+w_{iT}
+\end{bmatrix}
+\end{align*}
+\item Les expressions des estimators qui seront vus plus loin s'appliquent à cette définition
+ de $\boldy_i$, $\boldX_i$, et $\boldw_i$.
+\end{enumerate}
+    \end{itemize}
+\end{frame}    
+
+\begin{frame}[allowframebreaks]{Exogénéité stricte(modèle statique)}
+\begin{condition}(\textbf{\underline{Exogénéité stricte}})
+\begin{align*}
+    \Exp[\boldx_{it}\varepsilon_{is}] &= 0, \ \text{pour tout} \ (t,s)\in\{1, 2,\ldots, T\}.
+\end{align*}
+\end{condition}
+\begin{itemize}
+\item Cette condition ne sera pas vraisemblable sur des modèles incluant des régresseurs endogènes retardés:
+ e.g.,$y_{i, t-1}$,$y_{i, t-2}$. 
+ \item Par exemple, supposons que $y_{i,t-1}\subset \boldx_{it}$. 
+ \item Le modèle énonce que $y_{i,t-1}$ depends de $\varepsilon_{i,t-1}$. 
+ \item Il est alors clair que $\Exp[\boldx_{it} \varepsilon_{i,t-1}]\neq 0$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Effets fixes ou effets aléatoires}
+\begin{itemize}
+    \item Un des problème les plus importants que les données de panel 
+    permettent de traiter est celui de l'endogénéité due à l'hétérogénéité individuelle inobservée. 
+    \item Dans le cadre de la décomposition de l'erreur du modèle dans \eqref{eq6} cela concerne 
+    le problème posé par:
+    \begin{align*}
+        \Exp[\boldx_{it}\alpha_i]&\neq 0.
+    \end{align*}
+    \item Deux approches alternatives sont en général adoptées:
+    \begin{enumerate}
+        \item par les \textbf{effets fixes},
+        \item par les \textbf{effets aléatoires}.
+    \end{enumerate}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Effets fixes}
+ \begin{itemize}
+\item Dans cette approche aucune condition contraignant la relation entre $\alpha_i$ et $\{\boldx_{it}\}_{t=1}^T$
+ n'est posée. Par exemple, on ne supposera pas que $ \Exp[\boldx_{it}\alpha_i] = 0 $.
+ \item Dans la mesure où la loi conditionnelle de $\alpha_i$ sachant $\{\boldx_{it}\}_{t=1}^T$ 
+ n'est pas contrainte, un \textbf{modèle à effets fixes} peut être vu comme non-paramétrique par rapport 
+ à cette loi.
+ \item Typiquement les modèles à effets fixes s'appuient sur une transformation du modèle qui élimine 
+ les effets individuels où les rend redondants dans une vraisemblance conditionnelle.
+\end{itemize}
+\end{frame}
+\begin{frame}[allowframebreaks]{Effets aléatoires}
+    \begin{itemize}
+   \item Cette approche se caractérise par les conditions qui contraignent la loi conditionnelle 
+   de $\alpha_i$  sachant $\{\boldx_{it}\}_{t=1}^T$.
+   \item La condition la plus  forte est l'indépendance de $\alpha_i$  entre $\{\boldx_{it}\}_{t=1}^T$ avec 
+   $\alpha_i\sim i.i.d.(0, \sigma_\alpha^2)$. Il est courant de qualifier cette cas d'approche à \text{effets aléatoires}.
+   \item Néanmoins d'autres approches à effets aléatoires existent. Par exemple dans \cite{CHAMBERLAIN19841247} 
+   un modèle à \textbf{effets aléatoires corrélés} pose:
+   \begin{align*}
+    \alpha_i &= \lambda_0 + \boldx_{i1}^\prime \lambda_1 +\ldots +\boldx_{i1}^\prime \lambda_T + e_i,
+   \end{align*}
+   où $e_i$ est indépendant de $\{\boldx_{it}\}_{t=1}^T$, et $\{\lambda_t\}_{t=1}^T$ 
+   sont des paramètres à estimer avec $\bolda_0$.
+   \item C'est une \textbf{approche paramétrique} car elle dépends 
+   sur une condition quant à la loi de $\{\boldx_{it}\}_{t=1}^T$ et $\alpha_i$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Avantages relatifs entre les approches à EF et à EA}
+    \begin{itemize}
+        \item L'approche à EF est plus robuste qu'une approche à EA ou EA corrélés
+         dans la mesure où ces dernières dépendent de la validité de la 
+         condition imposé sur la relation entre effets individuels et régresseurs.
+          Si cette condition n'est pas satisfaite 
+          les estimateurs dans ces approches  ne seront probablement pas convergents.
+          \item Les transformations utilisées dans les approches à EF peuvent éliminer 
+          la variabilité dans l'échantillon des régresseurs exogènes. 
+          Cela peut rendre les résultats moins précis que ceux d'une approche à EA(quand les conditions dans 
+          celui-ci sont valides). 
+          \item Pour certains modèles, il n'y pas de méthode d'estimation convergent par EF. 
+          C'est par exemple le cas des modèles non-linéaires dynamiques. Voir par exemple \cite{Chamberlain2010}.
+    \end{itemize}
+\end{frame}
+
+\section{Estimation sous exogénéité par rapport aux effets individuels}
+\frame{\sectionpage}
+
+\begin{frame}[allowframebreaks]{Estimation par MCO}
+\begin{itemize}
+    \item On commence avec le cas le plus simple où l'effet individuel 
+    et les régresseurs ont une corrélation nulle:
+    \begin{align*}
+        \Exp[\boldx_{it}\alpha_i] &= 0.
+    \end{align*}
+    \item Dans ce cas, un estimateur convergent est simplement l'estimateur des MCO:
+    \begin{align*}
+    \hat{\bolda}_0^{MCO} &= \left[\sumiN\sumtT \boldx_{it}\boldx_{it}^\prime\right]^{-1}\sumiN\sumtT \boldx_{it}y_{it}\\
+               &= \left[\sumiN \boldX_i^\prime \boldX_i\right]^{-1}\sumiN \boldX_i^\prime \boldy_i.
+    \end{align*}
+    \item Cet estimateur est souvent appelé \textbf{estimateur des MCO empilé} car nous empilons/traitons
+     les observations comme s'il s'agissait de données en coupe.
+     \item Cet estimateur n'est pas efficace en raison de la corrélation sérielle des erreurs $u_{it}$:
+     \begin{align*}
+        \Exp[u_{it}; u_{i, t-j}] &= \Exp\left[(\alpha_i + \varepsilon_{it})(\alpha_i + \varepsilon_{i, t-j})\right] = \Exp[\alpha_i^2] =\sigma_\alpha^2
+    \end{align*}
+    \item L'estimateur asymptotiquement efficace est l'estimateur de moindres carrés généralisés.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Estimateur des MCG}
+    \begin{itemize}
+        \item Pour présenter cet estimateur, écrivons d'abord le modèle dans la notation matricielle suivante:
+        \begin{align*}
+            \boldy &= \boldX \bolda_0 + \boldu
+            \end{align*}
+            où:
+            \begin{align*}
+            \underset{(NT\times 1)}{\boldy}  = \begin{bmatrix}
+            \boldy_1\\
+            \boldy_2\\
+            \vdots\\
+            \boldy_n
+            \end{bmatrix}
+            ,\quad
+            \underset{(NT\times K)}{\boldX}  = \begin{bmatrix}
+            \boldX_1\\
+            \boldX_2\\
+            \vdots\\
+            \boldX_n
+            \end{bmatrix}
+            ,\quad
+            \underset{(NT\times 1)}{\boldu}  = \begin{bmatrix}
+            \boldu_1\\
+            \boldu_2\\
+            \vdots\\
+            \boldu_n
+        \end{bmatrix}
+            \end{align*}
+    \item Soit $\boldVr_{\boldu}$ la variance de  $\boldu$. 
+    \item Il est courant de définir l'estimateur des MCG comme l'estimateur des MCO du modèle transformé/pondéré suivant:
+    \begin{align*}
+        \left[\boldVr_{\boldu}^{-1/2}\boldy \right]&= \left[\boldVr_{\boldu}^{-1/2}\boldX\right]\bolda_0 + \left[\boldVr_{\boldu}^{-1/2}\boldu\right]
+    \end{align*}
+    \item Nous obtenons des expressions de $\boldVr_{\boldu}$ , de $\boldVr_{\boldu}^{-1/2}$, 
+    et des variables transformées
+    $\left[\boldVr_{\boldu}^{-1/2}\boldy \right]$ et $\left[\boldVr_{\boldu}^{-1/2}\boldX \right]$. 
+    \item Nous avons:
+    \begin{align*}
+    \boldVr_{\boldu} &= \Exp\left[\boldu \boldu^\prime\right] = \Exp
+    \begin{bmatrix}
+    \boldu_1\boldu_1^\prime &\boldu_1\boldu_2^\prime &\ldots &\boldu_1\boldu_N^\prime\\
+    &\boldu_2\boldu_2^\prime&\ldots&\boldu_2\boldu_N^\prime\\
+    &&\ddots&\vdots\\
+    &&&\boldu_N\boldu_N^\prime
+    \end{bmatrix}
+    \end{align*}
+
+    \item  Quand $\boldu_i$ est homoscédastique 
+    sur la dimension individuelle et $\Exp\left[\boldu_i\boldu_j^prime\right] = 0$ pour $i \neq j$,
+ 
+    \begin{align*}
+    \boldVr_{\boldu} = 
+    \begin{bmatrix}
+    \boldOmega&\boldzero&\ldots &\boldzero\\
+    \boldzero&\boldOmega&\ldots&\boldzero\\
+    \vdots&\boldzero&\ddots&\vdots\\
+    \boldzero&\vdots&\ldots&\boldOmega
+    \end{bmatrix}
+   = \Id_N\otimes\boldOmega
+   \end{align*}
+   où $\boldOmega$ est la matrice $T\times T$ $\Exp\left[\boldu_i\boldu_i^\prime\right]$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{QMCG quand les erreurs ne sont pas i.i.d.}
+    \begin{itemize}
+        \item On considère que $\boldSigma_{\boldu} = \Id_N\otimes\boldOmega$ où pour tout $i$ la matrice des variances-covariances 
+        suivante ne fait pas l'objet de contraintes,
+        \begin{align*}
+        \boldOmega &= 
+        \Exp
+        \begin{bmatrix}
+        u_{i1}^2&u_{i1} u_{i2}&\ldots &u_{i1}u_{iT}\\
+        &u_{i2}^2&\ldots&u_{i2}u_{iT}\\
+        &&\ddots&\vdots\\
+        &&&u_{iT}^2
+        \end{bmatrix}
+        \end{align*}
+        \item L'estimateur des MCG est équivalent à l'estimateur des MCO du modèle transformé suivant:
+        \begin{align*}
+        \left[\Id_n \otimes \Omega^{-1/2}\right]\boldy &= \left[\Id_N \otimes \Omega^{-1/2}\right]\boldX\bolda_0 + \boldu^{\star}
+        \end{align*}
+        \item L'estimateur des moindres carrés quasi généralisés(MCQG) est alors obtenu comme estimateur des MCO dans 
+        ce modèle transformé où $ \Omega$ a été préalablement estimé par un estimateur convergent:
+        \begin{enumerate}[$\star$]
+        \item Soit $\hat{\boldu}_i= \left[\hat{u}_{i1},  \hat{u}_{i2}, \ldots,\hat{u}_{iT}\right]^\prime$ 
+        le vecteur des résidus dans l'estimation par MCO du modèle non-transformé(MCO empilés) 
+        pour l"individu $i$.  
+        \item Un estimateur de $\boldOmega$ est:
+        \begin{align*}
+        \hat{\boldOmega} &= N^{-1} \sumiN \hat{\boldu}_i\hat{\boldu}_i^\prime.
+        \end{align*}
+        \item L'estimateur des MCQG utilise cet estimateur de $\boldOmega$.
+    \end{enumerate}
+    \end{itemize}
+\end{frame}
+
+\section{Estimation sans contrainte sur les effets individuels: "différences premières", "within", etc}
+\frame{\sectionpage}
+\begin{frame}[allowframebreaks]{Non-convergence des MCO}
+    \begin{itemize}
+        \item L'estimateur des MCO(ou sa version efficace avec les MCG) précédent n'est plus convergent 
+        car:
+        \begin{align*}
+            \Exp\left[\boldx_{it}(\alpha_i + \epsilon_{it})\right]& \neq 0.
+        \end{align*}
+        \item Nous allons étudier les estimateurs suivants:
+        \begin{enumerate}[$\star$]
+            \item MCO du modèle en différences premières.
+            \item Estimateur à effets fixes "within": variables en différence par rapport aux moyennes dans la dimension individuelle.
+            \item MCO avec dummies individuelles(LSDV).
+            \item Estimateur à effets aléatoires corrélés de Chamberlain.
+            \end{enumerate}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Modèle en différences premières}
+    \begin{itemize}
+        \item Comme cela a été indiqué plus haut les méthodes dites à effets fixes(c.à.d., 
+        n'imposant pas de contrainte sur la relation entre $\alpha_i$ et $\{\boldx_{it}\}_{i=1}^N$) 
+        s'appuient sur une transformation du modèle qui supprime $\alpha_i$. 
+        \item Un premier estimateur fondé sur cette approche est l'estimateur du modèle en différences 
+        premières contenu dans les exemples introductifs.
+        \item  Le modèle transformé considéré est:
+        \begin{align*}
+        \Delta y_{it} &= \Delta \boldx_{it}^\prime \bolda_0 + \Delta \varepsilon_{it}
+        \end{align*}
+        où par $\Delta w_{it}$ on représente ici
+        la différence première dans la dimension temporelle d'une variable $w_{it}$,
+        
+        c.à.d., $\Delta w_{it} = w_{it}-w_{i, t-1}$. Pour des vecteurs $\boldw_{it}$, $\Delta\boldw_{it}$ 
+        est simplement l'opérateur de $\Delta$ appliqué à chaque élément du vecteur.
+
+        \item L'exogénéité stricte de $\boldx_{it}$ implique que $ \Exp\left[ \Delta \boldx_{it}  \Delta \varepsilon_{it}\right] = 0$:
+        \begin{align*}
+        \Exp\left[\Delta \boldx_{it}  \Delta \varepsilon_{it}\right] =&=\underbrace{\Exp[\boldx_{it} \varepsilon_{it}]}_{=0} 
+        + \underbrace{\Exp[\boldx_{it} \varepsilon_{i, t-1}]}_{=0} + \underbrace{\Exp[\boldx_{i, t-1} V_{it}]}_{=0}  +  
+        \underbrace{\Exp[\boldx_{i, t-1} \varepsilon_{i, t-1}]}_{=0}=0,
+        \end{align*}
+        et par conséquent l'estimateur des MCO du modèle en differences premières est convergent.
+        \begin{align*}
+        \hat{\bolda}^{FD}_N = 
+        \left[\sumiN \underset{t=2}{\overset{T}{\sum}}\Delta \boldx_{it} \Delta \boldx_{it}^\prime\right]^{-1}
+        \left[\sumiN \underset{t=2}{\overset{T}{\sum}}\Delta \boldx_{it} \Delta y_{it}\right] &\underset{N\to +\infty}{\limp}
+        \end{align*}
+        \item Cet estimateur n'est pas cependant efficace (sauf quand $\varepsilon_{it}$ est une marche aléatoire), 
+        et on peut définir une estimateur des MCQG du modèle en différences premières.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Estimateur du modèle en "within"}
+\begin{itemize}
+    \item L'estimateur en "within" du modèle est un estimateur à effets fixes sur la transformation suivante du modèle:
+    \begin{align*}
+        y_{it} - \bar{y}_i &= \left(\boldx_{it} - \bar{\boldx}_i\right)^\prime\bolda_0 + (\varepsilon_{it}-\bar{\varepsilon}_i)
+        \end{align*}
+        où $\bar{y}_i := T^{-1}\sumtT y_{t}$, $\bar{\boldx}_i := T^{-1}\sumtT \boldx_{it}$, $\bar{\varepsilon}_i := T^{-1}\sumtT \varepsilon_{it}$.
+        \item L'estimateur en within est simplement l'estimateur des MCO de ce modèle 
+        en différence par rapport aux moyennes dans la dimension temporelle.
+        \begin{align*}
+        \hat{\bolda}^{WG}_N&=\left(\sumiN\sumtT \left(\boldx_{it} - \bar{\boldx}_i\right) \left(\boldx_{it} - \bar{\boldx}_i\right)^\prime\right)^{-1}
+        \sumiN\sumtT \left(\boldx_{it} - \bar{\boldx}_i\right)\left(y_{it} - \bar{y}_i\right)
+        \end{align*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Convergence de l'estimateur en "within"}
+\begin{itemize}
+    \item Cet estimateur est convergent dès lors qu'il n'y a pas de colinéarité  de que $\left(\boldx_{it} - \bar{\boldx}_i\right) $ et
+    $\Exp\left((\boldx_{it} - \bar{\boldx}_i) (\varepsilon_{it} - \bar{\varepsilon}_i)\right) = 0$.
+    
+    \item Notons que:
+    \begin{align*}
+    \Exp\left[(\boldx_{it} - \bar{\boldx}_i) (\varepsilon_{it} - \bar{\varepsilon}_i)\right]  &=\underbrace{\Exp[\boldx_{it}\varepsilon_{it}]}_{=0} +
+    \underbrace{\Exp[\boldx_{it}\bar{\varepsilon}_i]}_{=0} + \underbrace{\Exp[\bar{\boldx}_i\varepsilon_{it}]}_{=0} + 
+    \underbrace{\Exp[\bar{\boldx}_i\bar{\varepsilon}_i]}_{=0}=0
+    \end{align*}
+    
+    \item L'exogénéité stricte des régresseurs implique que toutes ces espérances sont zéro et 
+    que par conséquent l'estimateur en within 
+    est convergent.
+    \item Cependant, l'estimateur de $\alpha_i$ ne l'est pas pour $T$ fixe. En effet:
+    \begin{align*}
+    \underset{N\to + \infty}{\plim} \hat{\alpha}_i &= T^{-1}\sumtT\left(y_{it} - \boldx_{it}^\prime\left(\underset{N\to +\infty}{\plim} \hat{\bolda}_N^{WG}\right)\right) = T^{-1}\sumtT\left(y_{it}- \boldx_{it}^\prime\beta\right)\\
+    &=\alpha_i + \bar{\varepsilon}_i\neq \alpha_i
+    \end{align*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{MCO avec dummies individuelle(LSDV)}
+    \begin{itemize}
+    \item On traite maintenant les $\{\alpha_i\}_{i=1}^N$ comme des paramètres à estimator $\bolda_0$ .
+    
+    \item Pour cela écrivons le modèle comme suit:
+    
+    \begin{align*}
+        \boldy &= \boldX\bolda_0 + \boldD \boldalpha  + \boldvepsilon =  
+        \begin{bmatrix}
+        \boldX&:&  \boldQ
+        \end{bmatrix}
+        \begin{bmatrix}
+        \bolda_0\\
+        \boldalpha
+        \end{bmatrix} + \boldvepsilon
+        \end{align*}
+
+        \begin{enumerate}[$\star$]
+            \item $\boldQ$ est une matrice $N T\times N$ de dummies, une pour chaque individu,
+            \item la ième colonne $\boldd$ contient les observations de la dummie pour l'individu $i$, 
+            i.e., $1$ si l'observation appartient à $i$ et $0$ sinon
+            \item  $\boldalpha$ est le vecteur associé aux 
+            $\{\alpha_i\}_{i=1}^N$, i.e., $\boldalpha:=\left[\alpha_1, \ldots, \alpha_N\right]^\prime$.
+        \end{enumerate}
+
+        \item On appelle estimateur  LSDV( abbreviation pour "least squares dummie variables")
+        l'estimateur des MCO de
+         $\begin{bmatrix}
+           \bolda_0\\
+            \boldalpha
+          \end{bmatrix}$, soit:
+
+          \begin{align*}
+            \begin{bmatrix}
+            \hat{\bolda}^{LSDV}_N\\
+            \hat{\boldalpha}^{LSDV}_N
+            \end{bmatrix}
+            &=\left[
+            \begin{bmatrix}
+            \boldX&:&  \boldD
+            \end{bmatrix}^\prime
+            \begin{bmatrix}
+            \boldX&:& \boldQ
+            \end{bmatrix}\right]^{-1}
+            \begin{bmatrix}
+            \boldX&:& \boldQ
+            \end{bmatrix}^\prime\boldy\\
+            &=
+            \begin{bmatrix}
+            \boldX^\top \bold X & \boldX^\top\boldQ\\
+            \boldQ^\top\boldX&\boldQ^\top\boldQ
+            \end{bmatrix}^{-1}
+            \begin{bmatrix}
+            \boldX^\top\boldy\\
+            \boldQ^\top\boldy
+            \end{bmatrix}
+            \end{align*}
+
+            \item Cet estimateur peut sembler exigeant du point 
+de vue calculatoire dans la mesure il repose sur
+ l'inversion d'une matrice $(N +K)\times (N+ K)$ avec $N$ 
+ pouvant devenir très grand sur des panels typiques.
+    
+ \item Cet estimateur peut être obtenu sans besoin d'inverser  "directement" cette matrice. 
+ 
+ \item On peut pour cela utiliser les propriétés des matrices par
+ blocs/partitionnées $\boldQ^\prime\boldQ$ et $\boldQ^\prime\boldX$. 
+
+\item Appuyons nous sur le théorème  de Frish-Waugh-Lovell,  
+qui permet d'écrire l'estimateur des MCO comme suit:
+
+\begin{align*}
+    \hat{\bolda}^{LSDV}_N
+    &=
+    \left[
+    \boldX^\prime\boldM_\boldQ\boldX
+    \right)^{-1}
+    \left(
+    \boldX^\prime\boldM_\boldQ\boldy
+    \right]
+    \end{align*}
+
+    où  $\boldM_\boldQ$ est une matrice idempotente:
+\begin{align*}
+\boldM_\boldQ &=\Id_{NT} - \boldQ\left[\boldQ^\prime\boldQ\right]^{-1}\boldQ^\prime\\
+&= \left(\Id_n\otimes \Id_T\right) - \frac{1}{T}\left[\Id_n \otimes\boldone_T 
+\boldone_T^\prime\right]\\
+&= \Id_n\otimes\left[\Id_T -  \frac{1}{T} \boldone_T \boldone_T^\prime\right]
+\end{align*}
+
+\item Pré-multiplier $\boldy$ et $\boldX$ par $\boldM_\boldQ$, 
+le transforme en écart par rapport à leurs moyennes individuelles respectives:
+\begin{enumerate}[$\star$]
+\item pour $\boldM_\boldQ \boldy =: \boldy^{\star}$, et
+\item $\boldM_\boldQ \boldX =: \boldX^{\star}$, 
+\end{enumerate}
+\item L'élément $(i, t)$ étant donné par:
+\begin{align*}
+    y^{\star}_{it} = y_{it}-\bar{y}_i, &\quad  \boldx^{\star}_{it} = \boldx_{it}-\bar{\boldx}_i
+ \end{align*}
+    
+    où $\bar{y}_i:= T^{-1}\sumtT y_{it}$, $\bar{\boldx}_i:= T^{-1}\sumtT \boldx_{it}$. 
+
+\item Comme $\boldM_\boldQ$ est idempotente, on peut écrire:
+\begin{align*}
+\hat{\bolda}^{LSDV}_N  &=\left[ {\boldX^{\star}}^\prime\boldX^{\star}\right]^{-1}\left[{\boldX^{\star}}^\prime\boldy^{\star}\right]
+\end{align*}
+
+\item Par conséquent l'estimateur LSDV de $\bolda_0$ est numériquement équivalent à l'estimateur du modèle transformé suivant:
+\begin{align*}
+y_{it}- \bar{y}_i &= (x_{it}- \bar{x}_i)^\prime\bolda_0+ \varepsilon_{it}^{\star},
+\end{align*}
+c.à.d., à l'estimateur en "within" lequel apparaît comme une procédure plus "économe" de calcul de l'estimateur LSDV.
+
+\item Il est alors clair d'après ce qui a été dit sur l'estimateur en "within" que les les estimateur des effets fixes individuels 
+suivants:
+
+\begin{align*}
+    \hat{\alpha}_i^{LSDV} &= T^{-1}\sumtT(y_{it} - x_{it}^\prime\hat{\bolda}^{LSDV}_N), \ i=1, \ldots, N,
+\end{align*}
+
+ne seront pas convergents, et ce qui pose alors la question de la convergence de  $\hat{\alpha}_{i, N}^{LSDV}$.
+
+    \end{itemize}
+    \end{frame}
+
+    \begin{frame}[allowframebreaks]{Paramètre incident et convergence de l'estimateur LSDV}
+        \begin{itemize}
+            \item En \textbf{règle générale}(c.à.d., en dehors du seul cadre d'un modèle linéaire statique), l'estimateur LSDV d'un modèle 
+            de panel n'est pas convergent dans un raisonnement asymptotique avec $N\to + \infty$ et $T$ fixe.
+            
+            \item La raison en est le problème du paramètre incident: le nombre de paramètres dans $\bolda$ augmente à la même vitesse que 
+            $N$, et nous n'avons que $T$ observations pour chaque $\alpha_i$, et ainsi $\hat{\alpha}^{LSDV}_i$ n'est pas convergent. 
+
+            \item Est-ce que cela affecte la convergence de $\hat{\bolda}_N^{LSDV}$? 
+            \item Comme indiqué plus haut, oui en \textbf{règle générale} mais non le cas(particulier) d'un modèle linéaire statique.
+            \item Autrement dit, la convergence de $\hat{\bolda}_N^{LSDV}$ malgré la non convergence des estimateurs des effets fixes individuels, 
+            n'étend pas à des modèles dynamique et/ou non-linéaires.
+        \end{itemize}
+        \framebreak
+
+        \begin{remark_fr}[Intuitions sur la convergence de l'estimateur LSDV]
+            \begin{enumerate}[$\star$]
+                \item Malgré le fait que l'estimation LSDV des effets fixes individuels ne donne pas des estimateurs convergents 
+                pour $T$ fixe, l'erreur d'estimation $\alpha_i - \hat{\alpha}_i^{LSDV}$ n'est pas corrélée avec les régresseurs 
+                quand ceux-ci sont supposés strictement exogènes.  
+                \item Notons qu'asymptotiquement $\hat{\alpha}_i^{LSDV}$ est égal à $\alpha_i + \bar{\varepsilon}_i$ ce qui 
+                fait que l'erreur d'estimation $\alpha_i - \hat{\alpha}_i^{LSDV}$ est égal à $\bar{\varepsilon}_i$. 
+                \item Quand le régresseurs sont strictement exogènes cet erreur d'estimation n'est 
+                pas corrélée avec les régresseurs $\boldx_{it}$.
+                \item De plus, quand les chocs transitoires $\varepsilon_{it}$ sont i.i.d., l'estimateur "within" 
+                est aussi asymptotiquement efficace.
+            \end{enumerate}
+        \end{remark_fr}
+    \end{frame}
+
+
+\begin{frame}[allowframebreaks]{Références}
+ \bibliographystyle{jpe}
+  \bibliography{../Biblio}
+   \end{frame}
+
+    \end{document}
+    
